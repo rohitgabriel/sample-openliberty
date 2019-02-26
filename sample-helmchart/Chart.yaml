@@ -1,0 +1,4 @@
+apiVersion: v1
+description: sample open liberty app
+name: sample-openliberty
+version: 0.1.0

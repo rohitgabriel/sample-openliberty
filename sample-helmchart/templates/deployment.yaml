@@ -1,0 +1,63 @@
+##################################################################################################
+# Ingress Routing
+##################################################################################################
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+ name: sample-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+         serviceName: sample-app
+         servicePort: 9080
+      - path: /first
+        backend:
+          serviceName: sample-app
+          servicePort: 9080
+      - path: /second
+        backend:
+          serviceName: sample-app
+          servicePort: 9080
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  annotations:
+    prometheus.io/scrape: 'true'
+  name: sample-app
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: sample-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: sample-app
+    spec:
+      containers:
+      - name: sample-app
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+        - containerPort: 9080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sample-service
+  labels:
+    app: sample-service
+spec:
+  type: NodePort
+  ports:
+    - port: 9080
+  selector:
+    app: sample-app
