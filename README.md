@@ -10,4 +10,4 @@ helm install ./sample-helmchart/
 
 Note down the kubernetes service resource NodePort
 
-http://<Kube IP>:<NodePort>/sample/
+http://Kube IP:NodePort/sample/
